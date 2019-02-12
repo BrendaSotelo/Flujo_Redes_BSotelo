@@ -1,0 +1,243 @@
+\documentclass{article}
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption}
+\usepackage[spanish]{babel}
+\usepackage[latin1]{inputenc}
+\setlength{\parskip}{12pt}  %espacio entre parrafos
+\setlength{\parindent}{0cm} %inicios de cada parrado
+\usepackage{url}       %poner url en referencias
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+  backgroundcolor=\color{white},   
+  basicstyle=\footnotesize,        
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  commentstyle=\color{mygreen},    
+  deletekeywords={...},            
+  escapeinside={\%*}{*)},         
+  extendedchars=true,              
+  frame=single,	                   
+  keepspaces=true,                 
+  keywordstyle=\color{blue},       
+  language=Python,                 
+  numbers=left,
+  numbersep=4pt,
+  firstnumber=1,                    
+  showspaces=false,                
+  showtabs=false,              
+  stepnumber=1,                     
+  stringstyle=\color{mymauve},    
+  tabsize=2,	                   
+  }
+
+\title{\textbf{ Representación de redes a través de la teoría de grafos}}
+\author{Brenda Yaneth Sotelo Benítez}
+\date{\today}
+
+\begin{document}
+\maketitle
+En esta práctica se realizó una investigación de tipos de grafos simples y multígrafos, donde para cada uno de ellos se presenta una definición,representación de un ejemplo y aplicaciones prácticas.  
+
+El lenguaje de programación que se ha utilizado para la creación y representación de los ejemplos  es \texttt{Python}\cite{Python} con el uso del paquete NetwokX \cite{network} y  Matplotlib \cite{mat}. 
+
+Se comenzará definiendo algunos conceptos importantes basados en \cite{barrero2010,revenga2008} con el objetivo de tener una estructura organizada para una clara comprensión del tema. 
+
+\section*{Conceptos básicos}
+
+Un \textcolor{blue}{\textbf{\textit{grafo}}} \textit{G} es un par \textit{G=(V,A)} donde \textit{V} es el conjunto de vértices o nodos  y  \textit{A} un conjunto de aristas o arcos que se representan como pares de vértices (\textit{$v_{i}$,$v_{j}$}) $v_{i}$,$v_{j}$ $\in V$.
+
+Si las aristas tienen dirección, es un grafo \textcolor{blue}{\textbf{\textit{dirigido u orientado}}} también llamado \textit{digrafo}. En cada arista dirigida (\textit{$v_{i}$,$v_{j}$}) el primer elemento representa el origen(o fuente) de la arista y el segundo es el destino. Si las aristas no tienen dirección se trata de un grafo \textcolor{blue}{\textbf{\textit{no dirigido}}} donde (\textit{$v_{i}$, $v_{j}$})=(\textit{$v_{j}$,$\ v_{i}$}) $\forall v_{i},v_{j} \in V$. A los nodos y aristas se les puede asignar nombres o etiquetas, teniendo así un \textit{grafo etiquetado}, mientras que asignar pesos a las aristas se denomina \textit{grafo ponderado}.
+
+Un \textcolor{blue}{\textbf{\textit{ciclo}}} es una secuencia de aristas consecutivas que empieza y termina en el mismo vértice. Un grafo que no contiene ciclos es \textcolor{blue}{\textbf{\textit{acíclico}}}. Los ciclos de longitud 1 se llaman \textit{bucles o lazos}, ya que estos inician y terminan en el mismo vértice sin pasar por ningun otro. 
+
+Si un grafo cuenta con al menos un bucle , el grafo es \textcolor{blue}{\textbf{\textit{reflexivo}}}.
+ 
+En un grafo \textcolor{blue}{\textbf{\textit{simple}}} no existe más de una arista para cada par de vértices, por otro lado, si el grafo no es simple se le llama grafo múltiple o \textcolor{blue}{\textbf{\textit{mutigrafo}}}.
+
+\section{Grafo simple no dirigido acíclico}
+Son usados para representar árboles genealógicos, organigramas, redes de distribución, carreteras(aristas) y ciudades(vértices) o bien en la química orgánica para representar compuestos. En la figura \ref{Figura1} se muestra un tipo de hidrocarburo saturado donde los vértices representan los atómos de carbono e hidrógeno y las aristas los enlaces entre ellos.  
+
+\lstinputlisting[firstline=11, lastline=17]{Grafo1.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GNA.eps}  
+\caption{Propano ( $C_{3}H_{8}$)}
+\label{Figura1}
+\end{figure}
+
+\newpage
+\section{Grafo simple no dirigido cíclico}
+Entre sus aplicaciones está la representación de polígonos, redes eléctricas, en el problema del agente viajero, esquemas, representar calles en doble sentido, etc.
+
+Un ejemplo red de ocho ordenadores se observa en la figura \ref{Figura2} que pueden conectarse de múltiples maneras y dan lugara un grafo no dirigido cíclico. 
+
+\lstinputlisting[firstline=11, lastline=18]{Grafo2.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GNC.eps}  
+\caption{Red de ordenadores}
+\label{Figura2}
+\end{figure}
+
+\newpage
+\section{Grafo simple no dirigido reflexivo}
+Durante la conducción es típico presentarse con situaciones en las que es necesario pasar de una avenida a otra o cambiar la dirección de la ruta. Para ello, nos vemos en la necesidad de buscar retornos ya establecidos o en su caso, buscar alguna calle para retornar y continuar con el viaje. Esta situación puede ser representada como un grafo tal y como se muestra en la figura \ref{Figura3} donde las aristas representan las calles y el vértice rojo el lazo o retorno. 
+
+\lstinputlisting[firstline=11, lastline=19]{Grafo3.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GNR.eps}  
+\caption{Representación de calles con un retorno}
+\label{Figura3}
+\end{figure}
+
+Otro ejemplo en la vida real se encuentra cuando brindamos ayuda para realizar alguna tarea o trabajo y al mismo tiempo se obtiene el beneficio de reforzar conocimiento(lazo).
+Pueden planterse muchos otros problemas más de esta manera pues hasta el organizar nuestras actividades del día puede ser representada por un grafo.  
+
+\newpage
+\section{Grafo simple dirigido acíclico}
+En la figura \ref{Figura4} se plantea un modelo de conjuntos de tareas que necesitan una secuencia particular para realizarse y donde es importante que no existan ciclos para que las tareas no se repitan. 
+Los problemas de transporte y asignación, asi como las redes neuronales pueden ser planteados de forma muy sencilla mediante este tipo de grafo.  
+
+\lstinputlisting[firstline=11, lastline=18]{Grafo4.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GDA.eps}  
+\caption{Secuencia de tareas}
+\label{Figura4}
+\end{figure}
+
+\newpage
+\section{Grafo simple dirigido cíclico}
+El problema de VRP(ruteo de vehículos) es un problema clásico en la optimización de operaciones en el cual se tiene un depósito, un conjunto de vehículos que siguen una ruta y clientes que deben ser atendidos, donde cada uno representan las aristas y vértices respectivamente. Cada una de las rutas debe regresar al depósito. Ver figura \ref{Figura5}.
+
+\lstinputlisting[firstline=10, lastline=19]{Grafo5.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GDC.eps}  
+\caption{VRP}
+\label{Figura5}
+\end{figure}
+
+Los grafos simples dirigidos cíclicos también suelen presentarse en los diagramas de flujo. 
+
+\newpage
+\section{Grafo simple dirigido reflexivo}
+Un ejemplo está dado por la representación de una tienda proveedora que vende productos a varias sucursales pequeñas y que a su vez vende para si misma. Ver figura \ref{Figura6}.
+El vértice P es la tienda proveedora que tiene un lazo, mientras que los vétices etiquetados representan las tiendas. 
+
+\lstinputlisting[firstline=11, lastline=20]{Grafo6.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GDR.eps} 
+\caption{Red de distribución}
+\label{Figura6}
+\end{figure}
+
+\newpage
+\section{Multigrafo no dirigido acíclico}
+El camino que sigue un río cuando pasa por ciertas localidades se puede representar mediante un multigrafo tal como se observa en figura \ref{Figura7}. La arista roja representa en realidad dos aristas, dando lugar aun multigrafo. Esto debido a que un río suele dividirse cuando tiene de por medio obstáculos como tierra, piedras y se disparse en diferentes caminos beneficiando a varias comunidades.
+
+
+\lstinputlisting[firstline=10, lastline=18]{Grafo7.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MNA.eps}  
+\caption{Representación de un río}
+\label{Figura7}
+\end{figure}
+
+
+\newpage
+\section{Multigrafo no dirigido cíclico}
+En los aeropuertos existen diversas aerolíneas y cada una de ellas cuenta con cierta cantidad de aviones que parten a su destino y regresan al aeropuerto. Se puede plantear esta situación como un multigrafo  dado que puede haber más de un avión que vaya al mismo destino, dirigido y cíclico por el hecho de regresar al origen después de hacer todas sus paradas. Ver figura \ref{Figura8}. 
+
+
+\lstinputlisting[firstline=11, lastline=19]{Grafo8.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MNC.eps} 
+\caption{Vuelos de aerolíneas}
+\label{Figura8}
+\end{figure}
+
+\newpage
+\section{Multigrafo no dirigido reflexivo}
+
+En el ámbito económico, la figura \ref{Figura9} presenta un multigrafo  donde el vértice rojo representa a un inversionista que tiene a varios socios. Él  puede decidir si invertir, que alguien invierta en él o que el mismo invierta en si mismo, lo cual esto último crearía el lazo en el grafo. 
+
+
+\lstinputlisting[firstline=11, lastline=21]{Grafo9.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MNR.eps} 
+\caption{Proceso de inversión}
+\label{Figura9}
+\end{figure}
+
+\newpage
+\section{Multigrafo dirigido acíclico}
+
+Un ejemplo de multigrafo dirigido cíclico se puede observar en los ductos de agua, que su representación se muestra en la figura \ref{Figura10} que estan conectados de forma consecutiva sin formar ciclos y donde las aristas celestes son dos tuberías conectadas que llegan al mismo destino. 
+\lstinputlisting[firstline=12, lastline=19]{Grafo10.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MDA.eps}  
+\caption{Ductos de agua}
+\label{Figura10}
+\end{figure}
+
+\newpage
+\section{Multigrafo dirigido cíclico}
+Un ejemplo representativo está en las calles o avenidas, donde para llegar aun lugar existen varias  alternativas y en su caso suele presentarse que se forme un ciclo para poder salir de una de ellas. O en el peor de los casos, toparse con calles sin salida o no saber a donde dirigirse. Las flechas resaltadas indican que entre ese par de vértices existen dos aristas o calles. Ver figura \ref{Figura11}.
+
+\lstinputlisting[firstline=11, lastline=18]{Grafo11.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MDC.eps}  
+\caption{Representación de avenidas}
+\label{Figura11}
+\end{figure}
+
+Otra manera en la que se hace uso de este multigrafo es en la elaboración de esquemas donde se representen las tareas que cada trabajador debe realizar y considerando que una misma persona puede repetir tareas o más de una persona puede realizar la mismaz tarea.
+
+\newpage 
+\section{Multigrafo dirigido reflexivo}
+
+En la figura \ref{Figura12} se plantea un modelo donde un hospital suminista medicinas a varias estaciones moviles, pero también se suministra el mismo.
+
+\lstinputlisting[firstline=11, lastline=21]{Grafo12.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MDR.eps}  
+\caption{Distibución de ayuda}
+\label{Figura12}
+\end{figure}
+
+
+
+
+
+\bibliography{Tarea1}
+\bibliographystyle{unsrt}
+\end{document}
