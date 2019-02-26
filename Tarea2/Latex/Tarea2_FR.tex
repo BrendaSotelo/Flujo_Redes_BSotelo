@@ -1,0 +1,200 @@
+\documentclass{article}
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption}
+\usepackage[spanish]{babel}
+\usepackage[latin1]{inputenc}
+\setlength{\parskip}{12pt}  %espacio entre parrafos
+\setlength{\parindent}{0cm} %inicios de cada parrado
+\usepackage{url}       %poner url en referencias
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+  backgroundcolor=\color{white},   
+  basicstyle=\footnotesize,        
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  commentstyle=\color{mygreen},    
+  deletekeywords={...},            
+  escapeinside={\%*}{*)},         
+  extendedchars=true,              
+  frame=single,	                   
+  keepspaces=true,                 
+  keywordstyle=\color{blue},       
+  language=Python,                 
+  numbers=left,
+  numbersep=4pt,
+  firstnumber=1,                    
+  showspaces=false,                
+  showtabs=false,              
+  stepnumber=1,                     
+  stringstyle=\color{mymauve},    
+  tabsize=2,	                   
+  }
+
+\title{\textbf{ Visualización de grafos}}
+\author{Brenda Yaneth Sotelo Benítez \\ 5705}
+
+\date{\today}
+\begin{document}
+\maketitle
+
+Este trabajo busca visualizar  grafos utilizando un diferente algoritmo de acomodo (inglés: layout) para cada caso, con la implementación de la librería \color{blue}Networkx\color{black}\ \cite{Net} y \color{blue}Matplotlib\color{black}\ \cite{Mat} de \texttt{Python} \cite{Python} para la generación de grafos y guardar imágenes en el formato \textit{eps} respectivamente. El código empleado se obtuvo consultando documentación oficial \cite{network}  y los ejemplos mostrados se encuentran en \cite{BYSB}.   Se utilizan arcos rojos para representar cuando un nodo tiene múltiples aristas y un nodo cuadrado verde para representar un lazo. 
+\section{Grafo simple no dirigido acíclico}
+El algoritmo de acomodo utilizado para este ejemplo es el \texttt{kamada\_kawai\_layout} que toma en cuenta las distancias cuando posiciona un nodo. Se observa que el resultado de aplicarlo es bueno debido a que la cantidad de cruces es mínima, se mantiene la idea del ejemplo original y no es necesario hacer iteraciones. El resultado de la visualización se muestra en la figura \ref{Figura1}.
+\lstinputlisting[firstline=11, lastline=22]{Ej1.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GNA.eps}  
+\caption{Propano ($C_{3}H_{8}$)}
+\label{Figura1}
+\end{figure}
+
+\newpage
+\section{Grafo simple no dirigido cíclico}
+En la figura \ref{Figura2} se puede apreciar el resultado de aplicar el algoritmo de 
+\texttt{fruch- \\ terman\_reingold\_layout} que al igual que \texttt{kamada\_kawai\_layout} son dirigidos por fuerzas, con la característica especial de la distribución de los nodos de forma homogénea. Se fijo un total de mil iteraciones para que el grafo se ajustara sin perder la forma debido a que con la ejecución de menos iteraciones el resultado es malo. 
+\lstinputlisting[firstline=11, lastline=23]{Ej2.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GNC.eps}  
+\caption{Red de computadoras}
+\label{Figura2}
+\end{figure}
+
+\newpage
+\section{Grafo simple no dirigido reflexivo}
+El algoritmo \texttt{shell\_layout} utilizado para la visualización del ejemplo de calles con retorno, tal y como se muestra en la figura \ref{Figura3} tiene buenos resultados a comparación del ejemplo original y de los otros diseños de acomodo utilizados, destacando que posiciona los nodos en círculos concéntricos y tiene la facilidad de elegir el centro del diseño. A continuación se muestra parte del código realizado donde también se hace uso de formas diferentes en los nodos y aristas. 
+\lstinputlisting[firstline=11, lastline=26]{Ej3.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GNR.eps}  
+\caption{Representación de calles con un retorno}
+\label{Figura3}
+\end{figure}
+
+\newpage
+\section{Grafo simple dirigido acíclico}
+El algoritmo de acomodo \texttt{circular\_layout} como su nombre lo indica, tiene la característica de acomodar los nodos en círculo. Debido a esto, el ejemplo de secuencia de tareas que se muestra en la figura \ref{Figura4} tiene un buen ajuste en la representación e incluso mejor que el original. Este diseño es útil para crear grafos circulares con un número mayor de nodos.
+\lstinputlisting[firstline=11, lastline=24]{Ej4.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GDA.eps}  
+\caption{Secuencia de tareas}
+\label{Figura4}
+\end{figure}
+
+\newpage
+\section{Grafo simple dirigido cíclico}
+Para el diseño del ejemplo de ruteo de vehículos se hizo uso del algoritmo \texttt{spring\_layout} que puede recibir hasta once parámetros y utiliza el algoritmo de Fruchterman-Reingold. El resultado de cien iteraciones se muestra en la figura \ref{Figura5} dado que a menor número de iteraciones los nodos están muy dispersos y hay cruces de aristas y a mayor número de iteraciones los nodos están más cercanos, es por eso que se tomó una cantidad media de iteraciones. 
+\lstinputlisting[firstline=11, lastline=26]{Ej5.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GDC.eps}  
+\caption{VRP}
+\label{Figura5}
+\end{figure}
+
+\newpage
+\section{Grafo simple dirigido reflexivo}
+En la figura \ref{Figura6} se muestra el resultado de aplicar el algoritmo de acomodo \texttt{random\_layout} que coloca los vértices al azar en un cuadrado al ejemplo de representación de una tienda proveedora que vende productos a varias sucursales pequeñas y que a su vez vende para si misma. Este algoritmo fue difícil de decidir donde aplicarlo ya que presenta una gran cantidad de cruces en las aristas por lo que se ejecutó el código varias veces para obtener la representacón que más se ajustara. 
+\lstinputlisting[firstline=11, lastline=23]{Ej6.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{GDR.eps} 
+\caption{Red de distribución}
+\label{Figura6}
+\end{figure}
+
+\newpage
+\section{Multigrafo no dirigido acíclico}
+El camino que sigue un río cuando pasa por ciertas localidades se puede representar mediante un multigrafo tal como se observa en figura \ref{Figura7}. Esto debido a que un río suele dividirse cuando tiene de por medio obstáculos como tierra, piedras y se disparse en diferentes caminos beneficiando a varias comunidades. El algoritmo de acomodo que se ajusta a esta representación es \texttt{nx\_pydot.pydot\_layout} que se muestra en la figura \ref{Figura7}.
+\lstinputlisting[firstline=11, lastline=25]{Ej7.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MNA.eps}  
+\caption{Representación de un río}
+\label{Figura7}
+\end{figure}
+
+\newpage
+\section{Multigrafo no dirigido cíclico}
+Para la representación del ejemplo de los aeropuertos donde existen diversas aerolíneas y cada una de ellas cuenta con cierta cantidad de aviones que parten a su destino y regresan al aeropuerto, en la figura \ref{Figura8} se muestra el resultado de aplicar el algoritmo \texttt{bipartite\_layout} que coloca los nodos en dos líneas rectas y se obtiene un buen resultado en comparación con el original. Es de utilidad para representar árboles. 
+\lstinputlisting[firstline=12, lastline=28]{Ej8.py} 
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MNC.eps} 
+\caption{Vuelos de aerolíneas}
+\label{Figura8}
+\end{figure}
+
+\newpage
+\section{Multigrafo no dirigido reflexivo}
+En la figura \ref{Figura9} se muestra el algoritmo \texttt{forceatlas2\_layout} para el ejemplo de un inversionista que tiene a varios socios. Él  puede decidir si invertir, que inviertan en él o invertir  en si mismo, lo cual esto último crearía el lazo en el grafo.
+
+\lstinputlisting[firstline=12, lastline=44]{Ej9.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MNR.eps} 
+\caption{Proceso de inversión}
+\label{Figura9}
+\end{figure}
+
+\newpage
+\section{Multigrafo dirigido acíclico}
+El algoritmo de acomodo utilizado para el ejemplo de los ductos de agua conectados de forma consecutiva sin formar ciclos es el \texttt{spectral\_layout} que coloca los nodos utilizando vectores propios. De la misma forma que  \texttt{random\_layout} se presentó la dificultad de analizar en donde aplicarlo  ya que los nodos y aristas se sobredibujaban y el grafo perdía forma. 
+\lstinputlisting[firstline=12, lastline=24]{Ej10.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MDA.eps}  
+\caption{Ductos de agua}
+\label{Figura10}
+\end{figure}
+
+\newpage
+\section{Multigrafo dirigido cíclico}
+En la figura \ref{Figura11} se aplica el algoritmo \texttt{shell\_layout} en el problema representativo de  calles o avenidas, donde para llegar a un lugar existen varias alternativas. El diseño muestra una buena visualización. 
+\lstinputlisting[firstline=11, lastline=23]{Ej11.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MDC.eps}  
+\caption{Representación de avenidas}
+\label{Figura11}
+\end{figure}
+
+\newpage
+\section{Multigrafo dirigido reflexivo}
+En la figura \ref{Figura12} se plantea un modelo donde un hospital suministra medicinas a
+varias estaciones móviles, pero también se suministra el mismo. El algoritmo utilizado para la representación es el \texttt{nx\_pydot.graphviz\_layout}. 
+\lstinputlisting[firstline=11, lastline=25]{Ej12.py}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{MDR.eps}  
+\caption{Distribución de ayuda}
+\label{Figura12}
+\end{figure}
+
+
+
+\bibliography{Tarea2}
+\bibliographystyle{unsrt}
+
+\end{document}
