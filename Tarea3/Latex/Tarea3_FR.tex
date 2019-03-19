@@ -1,0 +1,303 @@
+\documentclass{article}
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption}
+\usepackage[spanish]{babel}
+%\usepackage[latin1]{inputenc}
+\usepackage{subfigure}
+\usepackage{float}
+\setlength{\parskip}{12pt}  %espacio entre parrafos
+\setlength{\parindent}{0cm} %inicios de cada parrado
+\usepackage{url}       %poner url en referencias
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+  backgroundcolor=\color{white},   
+  basicstyle=\footnotesize,        
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  commentstyle=\color{mygreen},    
+  deletekeywords={...},            
+  escapeinside={\%*}{*)},         
+  extendedchars=true,              
+  frame=single,	                   
+  keepspaces=true,                 
+  keywordstyle=\color{blue},       
+  language=Python,                 
+  numbers=left,
+  numbersep=4pt,
+  firstnumber=1,                    
+  showspaces=false,                
+  showtabs=false,              
+  stepnumber=1,                     
+  stringstyle=\color{mymauve},    
+  tabsize=2,	                   
+  }
+
+\title{\textbf{ Medición de tiempo de ejecución}}
+\author{Brenda Yaneth Sotelo Benítez \\ 5705}
+
+
+\date{\today}
+\begin{document}
+\maketitle
+\renewcommand{\tablename}{Tabla}
+En este trabajo se realiza la medición de tiempo de ejecución de cinco algoritmos con cinco grafos distintos, con la implementación de la librería \color{blue}Networkx\color{black}\ \cite{Net} y \color{blue}Matplotlib\color{black}\ \cite{Mat} de \texttt{Python} \cite{Python} para la generación de grafos y guardar imágenes en el formato \textit{eps} respectivamente. El código empleado se obtuvo consultando documentación oficial \cite{network}  y los grafos utilizados se encuentran en el repositorio de Sotelo \cite{BYSB} que fueron modificados para cumplir con los requerimientos que cada algoritmo tiene sobre sus datos de entrada.
+
+Cada ejecución se repite una cantidad suficiente de veces para que el tiempo total de ejecución del conjunto de réplicas sea mayor a 5 segundos, posteriormente se repite la medición del conjunto de réplicas 30 veces en total. 
+
+Se presenta una breve descripción de cada algoritmo seleccionado, visualización de los grafos, el histograma de comparación de tiempos promedio para cada grafo, fragmentos relevantes de código y dos gráficas de dispersión.
+
+Las pruebas se han realizado en una PC con procesador Intel Core i3 2.00 GHz y 8.00 GB de RAM.
+
+\newpage
+\section*{Algoritmo 1}
+El algoritmo \texttt{maximum\_flow} recibe como parámetros principales un grafo simple G dirigido o no dirigido, capacidad de los arcos, que en dado caso de no ser especificada se considera que tienen capacidad infinita, un nodo fuente \textit{s} y  un nodo sumidero \textit{t} para el flujo.
+
+Consiste en encontrar la cantidad máxima de flujo que puede circular desde \textit{s} hasta \textit{t}, por lo que devuelve como resultado el valor total de flujo máximo y el valor del flujo que pasó por cada arco. 
+
+La tabla \ref{Tabla1} muestra la media y desviación estándar del tiempo de ejecución del conjunto de réplicas para cada grafo y en la figura \ref{Figura1} el histograma correspondiente al tipo de grafo y su tiempo promedio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Grafo} & \textbf{Media} & \textbf{Desviación} \\ \hline
+1              & 5.5907         & 0.4611              \\ \hline
+2              & 7.5716         & 0.5386              \\ \hline
+3              & 12.8474        & 0.6974              \\ \hline
+4              & 9.6711         & 0.6482              \\ \hline
+5              & 5.018          & 0.4612              \\ \hline
+\end{tabular}
+\caption{Reporte de la media y desviación} 
+\label{Tabla1}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{Histograma1.eps}  
+\caption{Tiempo promedio para maximum\_flow}
+\label{Figura1}
+\end{figure}
+
+Se presenta a continuación en la figura \ref{Grafos1} la solución para cada uno de los grafos donde en cada uno de ellos se muestra la ruta, la capacidad y el flujo que pasa a través de los arcos. 
+\lstinputlisting[firstline=27, lastline=27]{Algoritmo1_flujomax.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Grafo 1]{\includegraphics[width=60mm]{A1G1.eps}}\hspace{5mm}
+\subfigure[Grafo 2]{\includegraphics[width=60mm]{A1G2.eps}}\vspace{5mm}
+\subfigure[Grafo 3]{\includegraphics[width=60mm]{A1G3.eps}}\hspace{5mm}
+\subfigure[Grafo 4]{\includegraphics[width=60mm]{A1G4.eps}}\vspace{5mm}
+\subfigure[Grafo 5]{\includegraphics[width=60mm]{A1G5.eps}}
+\caption{Solución de maximum\_flow} \label{Grafos1}
+\end{figure}
+
+\newpage
+\section*{Algoritmo 2}
+El algoritmo \texttt{all\_shortest\_paths} recibe como parámetros principales un grafo simple G dirigido o no dirigido, peso en los arcos, que en dado caso de no ser especificada se toma como peso, distancia o costo igual a 1 , un nodo inicial \textit{source} y nodo final \textit{target} para la ruta, asi como el método, es decir, el algoritmo que se utiliza para calcular las longitudes de la ruta: \textit{dijkstra} o \textit{bellman-ford}.
+
+Consiste en buscar el camino más corto entre dos nodos, por lo que devuelve como resultado todas las rutas más cortas en el grafo.
+
+La tabla \ref{T2} muestra la media y desviación estándar del tiempo de ejecución del conjunto de réplicas para cada grafo y en la figura \ref{Figura2} el histograma correspondiente al tipo de grafo y su tiempo promedio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Grafo} & \textbf{Media} & \textbf{Desviación} \\ \hline
+1              & 6.0375         & 0.4586              \\ \hline
+2              & 10.5003        & 0.7112              \\ \hline
+3              & 14.9692        & 1.4172              \\ \hline
+4              & 10.6432        & 0.7121              \\ \hline
+5              & 9.3038         & 1.0171              \\ \hline
+\end{tabular}
+\caption{Reporte de la media y desviación} 
+\label{T2}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{Histograma2.eps}  
+\caption{Tiempo promedio para all\_shortest\_paths}
+\label{Figura2}
+\end{figure}
+
+Se presenta a continuación en la figura \ref{Grafos2} la solución para cada uno de los grafos, en cada uno de ellos se muestra la ruta más corta y el peso de cada uno de los arcos. 
+
+\lstinputlisting[firstline=26, lastline=26]{Algoritmo2_shortestpaths.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Grafo 1]{\includegraphics[width=60mm]{A2G1.eps}}\hspace{5mm}
+\subfigure[Grafo 2]{\includegraphics[width=60mm]{A2G2.eps}}\vspace{5mm}
+\subfigure[Grafo 3]{\includegraphics[width=60mm]{A2G3.eps}}\hspace{5mm}
+\subfigure[Grafo 4]{\includegraphics[width=60mm]{A2G4.eps}}\vspace{5mm}
+\subfigure[Grafo 5]{\includegraphics[width=60mm]{A2G5.eps}}
+\caption{Solución de all\_shortest\_paths} \label{Grafos2}
+\end{figure}
+
+\newpage
+\section*{Algoritmo 3}
+El algoritmo \texttt{minimum\_spanning\_tree} recibe como parámetros principales un grafo simple G dirigido o no dirigido, peso en los arcos, asi como el método, es decir, el algoritmo que se utiliza para encontrar un árbol de expansión mínima: \textit{kruskal}, \textit{bprim} o \textit{boruvka}. El algoritmo predeterminado es \textit{kruskal}.
+
+Devuelve como resultado un árbol o bosque de expansión mínima en un grafo. 
+
+La tabla \ref{Tabla3} muestra la media y desviación estándar del tiempo de ejecución del conjunto de réplicas para cada grafo y en la figura \ref{Figura3} el histograma correspondiente al tipo de grafo y su tiempo promedio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Grafo} & \textbf{Media} & \textbf{Desviación} \\ \hline
+1              & 6.3368         & 0.352               \\ \hline
+2              & 7.2527         & 0.4135              \\ \hline
+3              & 9.9281         & 0.6668              \\ \hline
+4              & 8.3248         & 0.4654              \\ \hline
+5              & 4.3935         & 0.318               \\ \hline
+\end{tabular}
+\caption{Reporte de la media y desviación} 
+\label{Tabla3}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{Histograma3.eps}  
+\caption{Tiempo promedio para minimum\_spanning\_tree}
+\label{Figura3}
+\end{figure}
+
+Se presenta a continuación en la figura \ref{Grafos3} la solución para cada uno de los grafos, en cada uno de ellos se muestra el camino que sigue el árbol de expansión.
+
+\lstinputlisting[firstline=35, lastline=35]{Algoritmo3_mintree.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Grafo 1]{\includegraphics[width=60mm]{A3G1.eps}}\hspace{5mm}
+\subfigure[Grafo 2]{\includegraphics[width=60mm]{A3G2.eps}}\vspace{5mm}
+\subfigure[Grafo 3]{\includegraphics[width=60mm]{A3G3.eps}}\hspace{5mm}
+\subfigure[Grafo 4]{\includegraphics[width=60mm]{A3G4.eps}}\vspace{5mm}
+\subfigure[Grafo 5]{\includegraphics[width=60mm]{A3G5.eps}}
+\caption{Solución de minimum\_spanning\_tree} \label{Grafos3}
+\end{figure}
+
+\newpage
+\section*{Algoritmo 4}
+El algoritmo \texttt{greedy\_color} recibe como parámetros principales un grafo simple G dirigido o no dirigido, una estrategia para el orden de coloración de los nodos y un algoritmo de intercambio.
+
+Consiste en colorear un grafo con la menor cantidad de colores posible, donde para cada vecino de un nodo no puede tener el mismo color que el mismo. 
+
+La tabla \ref{Tabla4} muestra la media y desviación estándar del tiempo de ejecución del conjunto de réplicas para cada grafo y en la figura \ref{Figura4} el histograma correspondiente al tipo de grafo y su tiempo promedio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Grafo} & \textbf{Media} & \textbf{Desviación} \\ \hline
+1              & 3.4836         & 0.6221              \\ \hline
+2              & 5.3441         & 2.0836              \\ \hline
+3              & 6.2121         & 1.1141              \\ \hline
+4              & 5.331          & 1.4626              \\ \hline
+5              & 4.0002         & 1.6867              \\ \hline
+\end{tabular}
+\caption{Reporte de la media y desviación} 
+\label{Tabla4}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{Histograma4.eps}  
+\caption{Tiempo promedio para greedy\_color}
+\label{Figura4}
+\end{figure}
+
+Se presenta a continuación en la figura \ref{Grafos4} la solución para cada uno de los grafos. 
+
+\lstinputlisting[firstline=27, lastline=27]{Algortimo4_coloreo.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Grafo 1]{\includegraphics[width=60mm]{A4G1.eps}}\hspace{5mm}
+\subfigure[Grafo 2]{\includegraphics[width=60mm]{A4G2.eps}}\vspace{5mm}
+\subfigure[Grafo 3]{\includegraphics[width=60mm]{A4G3.eps}}\hspace{5mm}
+\subfigure[Grafo 4]{\includegraphics[width=60mm]{A4G4.eps}}\vspace{5mm}
+\subfigure[Grafo 5]{\includegraphics[width=60mm]{A4G5.eps}}
+\caption{Solución de greedy\_color} \label{Grafos4}
+\end{figure}
+
+\newpage
+\section*{Algoritmo 5}
+
+El algoritmo \texttt{dfs\_tree} recibe como parámetros principales un grafo simple G dirigido, un nodo fuente opcional para el inicio de la búsqueda en profundidad y la especificación del límite de búsqueda a profundidad.
+
+Consiste en recorrer todos los nodos de un grafo comenzando de un nodo fuente y visitando a sus nodos adyacentes de tal manera que va formando un árbol a profundidad
+.
+Devuelve como resultado un árbol dirigido. 
+
+La tabla \ref{Tabla5} muestra la media y desviación estándar del tiempo de ejecución del conjunto de réplicas para cada grafo y en la figura \ref{Figura5} el histograma correspondiente al tipo de grafo y su tiempo promedio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Grafo} & \textbf{Media} & \textbf{Desviación} \\ \hline
+1              & 6.7802         & 0.4576              \\ \hline
+2              & 12.0012        & 1.4879              \\ \hline
+3              & 15.2492        & 0.6522              \\ \hline
+4              & 12.4167        & 1.4608              \\ \hline
+5              & 6.2011         & 0.5338              \\ \hline
+\end{tabular}
+\caption{Reporte de la media y desviación} 
+\label{Tabla5}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{Histograma5.eps}  
+\caption{Tiempo promedio para dfs\_tree}
+\label{Figura5}
+\end{figure}
+
+Se presenta a continuación en la figura \ref{Grafos5} la solución para cada uno de los grafos, en cada uno de ellos se muestra el camino que sigue el algoritmo.
+
+\lstinputlisting[firstline=24, lastline=24]{Algoritmo5.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Grafo 1]{\includegraphics[width=60mm]{A5G1.eps}}\hspace{5mm}
+\subfigure[Grafo 2]{\includegraphics[width=60mm]{A5G2.eps}}\vspace{5mm}
+\subfigure[Grafo 3]{\includegraphics[width=60mm]{A5G3.eps}}\hspace{5mm}
+\subfigure[Grafo 4]{\includegraphics[width=60mm]{A5G4.eps}}\vspace{5mm}
+\subfigure[Grafo 5]{\includegraphics[width=60mm]{A5G5.eps}}
+\caption{Solución de dfs\_tree} \label{Grafos5}
+\end{figure}
+
+
+En la figura \ref{Figura8} y figura \ref{Figura9} se muestra la gráfica de dispersión de cantidad de nodos y arcos contra el tiempo promedio de ejecución de cada uno de los grafos con los cinco tipos de algoritmos respectivamente. Cada forma de la gráfica representa un tipo de algoritmo. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{S1.eps}  
+\caption{Cantidad de nodos contra tiempos}
+\label{Figura8}
+\end{figure}
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{S2.eps}  
+\caption{Cantidad de arcos contra tiempos}
+\label{Figura9}
+\end{figure}
+
+\newpage
+\bibliography{Tarea2}
+\bibliographystyle{unsrt}
+
+\end{document}
