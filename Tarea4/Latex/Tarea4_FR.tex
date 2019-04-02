@@ -1,0 +1,180 @@
+\documentclass{article}
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption}
+\usepackage[spanish]{babel}
+%\usepackage[latin1]{inputenc}
+\usepackage{subfigure}
+\usepackage{float}
+\setlength{\parskip}{12pt}  %espacio entre parrafos
+\setlength{\parindent}{0cm} %inicios de cada parrado
+\usepackage{url}       %poner url en referencias
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+  backgroundcolor=\color{white},   
+  basicstyle=\footnotesize,        
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  commentstyle=\color{mygreen},    
+  deletekeywords={...},            
+  escapeinside={\%*}{*)},         
+  extendedchars=true,              
+  frame=single,	                   
+  keepspaces=true,                 
+  keywordstyle=\color{blue},       
+  language=Python,                 
+  numbers=left,
+  numbersep=4pt,
+  firstnumber=1,                    
+  showspaces=false,                
+  showtabs=false,              
+  stepnumber=1,                     
+  stringstyle=\color{mymauve},    
+  tabsize=2,	                   
+  }
+
+\title{\textbf{Complejidad asintótica experimental}}
+\author{Brenda Yaneth Sotelo Benítez \\ 5705}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\vspace{-1 cm}
+\begin{center}\rule{\textwidth}{0.1mm} \end{center}
+\vspace{-1.3 cm}
+\begin {center}
+%\item \Large{\textbf{}}
+\end {center}
+
+En este trabajo se realiza la medición de tiempo de ejecución de tres métodos de generación de grafos de orden 8, 16, 32, 64 a base 2 con tres implementaciones de algoritmos de flujo máximo. Se generaron diez grafos distintos de cada orden con la asignación de pesos positivos normalmente distribuidos a las aristas con media $\mu=10$ y desviación estándar $\sigma=3 $ para poder ser utilizados en las instancias del problema de flujo máximo. 
+
+Los algoritmos seleccionados se ejecutan con cinco diferentes pares de fuente-sumidero y se obtuvieron por medio de la librería \color{blue}Networkx\color{black}\ \cite{Net} y \color{blue}Matplotlib\color{black}\ \cite{Mat} de \texttt{Python} \cite{Python} para la generación de grafos y guardar imágenes en el formato \textit{eps} respectivamente. Además se hace uso de la librería \color{blue}Numpy\color{black}\ \cite{Num} para la suma de tiempos, calculo de tiempos promedios y desviaciones estándar y \color{blue}Pandas\color{black}\ \cite{Pd} para el tratamiento de datos. El código empleado se obtuvo consultando documentación oficial \cite{network}.
+
+Se presenta una breve descripción de los algoritmos seleccionados, visualización de los grafos, fragmentos relevantes de código y una sección de resultados donde se muestra un análisis de varianza para saber si los efectos entre el algoritmo generador, algoritmo de flujo máximo, orden y la densidad del grafo con el tiempo de ejecución son estadísticamente significativos. 
+
+Las pruebas se han realizado en una PC con procesador Intel Core i3 2.00 GHz y 8.00 GB de RAM.
+\vspace{-0.5cm}
+%\begin{center}\rule{\textwidth}{0.1mm} \end{center}
+\newpage
+\section*{Métodos generadores de grafos}
+La elección de los siguientes métodos se debe a que la visualización de cada uno es interesante, sobre todo los que generan grafos n-dimensionales, por la aplicación práctica que tienen, simplicidad y variedad. 
+\begin{enumerate}
+\item \texttt{Complete\_graph}. Tiene como parámetros el número de nodos que se desea y el tipo de grafo, que toma por defecto un grafo simple no dirigido.  
+
+La figura \ref{Figura1} muestra una visualización de este generador. 
+\lstinputlisting[firstline=30, lastline=30]{generadores_algoritmos.py}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{complete.eps}  
+\caption{Complete graph}
+\label{Figura1}
+\end{figure}
+
+\item \texttt{Wheel\_graph}. El grafo de la rueda tiene un nodo central que esta conectado a un ciclo de (n-1) nodos. Recibe como parámetros el número de nodos, el tipo de grafo que se desea crear, el cual tiene como opción predeterminada un grafo simple no dirigido. Las etiquetas de los nodos van de 0 a n-1.
+
+Se presenta la visualización del generador en la figura \ref{Figura2}.  
+\lstinputlisting[firstline=16, lastline=16]{generadores_algoritmos.py}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{wheel.eps}  
+\caption{Wheel graph}
+\label{Figura2}
+\end{figure}
+ 
+\item \texttt{Grid\_graph}. Recibe como principal parámetro la cantidad de nodos que puede ser una lista, tupla o un entero y devuelve un grafo de cuadricula n-dimensional. 
+
+La figura \ref{Figura3} muestra una visualización de este generador. 
+\lstinputlisting[firstline=55, lastline=55]{generadores_algoritmos.py}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{grid.eps}  
+\caption{Grid graph}
+\label{Figura3}
+\end{figure}
+
+\item \texttt{Circular\_ladder\_graph}. Devuelve un grafo de escalera circular, que consiste en dos ciclos de n nodos en donde cada uno de los n pares de nodos se unen por una arista. Toma como dato de entrada la cantidad de nodos y las etiquetas de estos son los números enteros de 0 a n-1. 
+
+La figura \ref{Figura4} muestra una visualización de este generador. 
+\lstinputlisting[firstline=43, lastline=43]{generadores_algoritmos.py}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{circular.eps}  
+\caption{Circular ladder graph}
+\label{Figura4}
+\end{figure}
+
+\end{enumerate}
+\section*{Algoritmos de flujo máximo}
+La elección de los siguientes algoritmos se debe a la variedad que hay para calcular el valor del flujo de un grafo, que reciben parámetros similares y retornan diferentes datos. 
+\begin{enumerate}
+\item \texttt{Maximum\_flow\_value}. Encuentra y devuelve el valor del flujo máximo donde cada arista debe tener una capacidad, que en caso de no tenerla toma por defecto una capacidad infinita, recibe un nodo fuente y un nodo sumidero y una función para calcular el flujo máximo.  El algoritmo no es compatible con multigrafos.  
+\lstinputlisting[firstline=78, lastline=78]{generadores_algoritmos.py}
+
+\item \texttt{Minimum\_cut}. Recibe como parámetros principales la capacidad y si este dato se omite se considera que tiene una capacidad infinita , nodo fuente y sumidero para el flujo y una función para calcular el flujo máximo. Devuelve el valor del corte mínimo y la partición de los nodos que definen el corte mínimo.  
+\lstinputlisting[firstline=100, lastline=100]{generadores_algoritmos.py}
+
+\item \texttt{Minimum\_cut\_value}. Este algoritmo devuelve solamente el valor que tiene el corte mínimo. Tiene como datos de entrada el nodo fuente y nodo sumidero, una función para calcular el flujo máximo y la capacidad de las aristas que por defecto se considera que tiene una capacidad infinita. 
+\lstinputlisting[firstline=120, lastline=120]{generadores_algoritmos.py}
+\end{enumerate}
+
+\section*{Resultados}
+Los resultados del análisis de varianza de los efectos simples se muestran en el cuadro \ref{cuadro1}, donde los factores que presentan una relación significativa con el tiempo de ejecución son la densidad, generador de grafo y orden, es decir, que tienen un p-valor menor a 0.05 (nivel de significancia) y para los que la hipótesis nula de que las medias son iguales se rechaza. Mientras que el factor algoritmo no es significativo con el tiempo de ejecución.
+  
+\begin{table}[H]
+\centering
+\caption{Efectos simples}
+\begin{tabular}{|l|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Factor}} & \multicolumn{1}{c|}{\textbf{P-valor}} \\ \hline
+Algoritmo & 0.316 \\ \hline
+Densidad & 0.000 \\ \hline
+Generador & 0.000 \\ \hline
+Orden & 0.000 \\ \hline
+\end{tabular}
+\label{cuadro1}
+\end{table}
+
+Por otro lado, en la figura \ref{Figura5} se muestran los diagramas de caja y bigotes para cada nivel de los factores donde se observa que el generador 1 es el que mayor tiempo consume a comparación del generador 2, los tres tipos de algoritmos parecen tener tiempos de ejecución similares, conforme va creciendo el orden de los grafos el tiempo de ejecución crece también y que a menor densidad el tiempo aumenta.   
+
+\begin{figure}[H]
+\centering
+\subfigure[Generador de grafo contra tiempo]{\includegraphics[width=60mm]{box1.eps}}\hspace{5mm}
+\subfigure[Algoritmo contra tiempo]{\includegraphics[width=60mm]{box2.eps}}\vspace{5mm}
+\subfigure[Orden del grafo contra tiempo]{\includegraphics[width=60mm]{box3.eps}}\hspace{5mm}
+\subfigure[Densidad del grafo contra tiempo]{\includegraphics[width=60mm]{box4.eps}}\vspace{5mm}
+\caption{Diagramas de caja y bigotes de los factores. } \label{Figura5}
+\end{figure}
+
+Además, en el cuadro \ref{cuadro2} se muestran los efectos de interacción para cada pareja de factor de los factores mencionados en el cuadro 1, donde se puede concluir que las interacciones generador-densidad, generador-orden y orden-densidad tienen relación significativa, es decir, que tienen un p-valor menor a 0.05 (nivel de significancia), por lo que la combinación que se tome de cada uno de los factores importa para el valor del tiempo de ejecución. Mientras que las interacciones algoritmo-densidad, algoritmo-orden y generador-orden no tienen relación significativa con el tiempo dado que el p-valor es mayor a 0.05, por lo que no importa que combinación se tenga de los factores. 
+
+\begin{table}[H]
+\centering
+\caption{Efectos de interacción}
+\begin{tabular}{|l|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Factor}} & \multicolumn{1}{c|}{\textbf{P-valor}} \\ \hline
+Algoritmo-Densidad & 0.785 \\ \hline
+Algoritmo-Orden & 0.417 \\ \hline
+Generador-Algoritmo & 0.311 \\ \hline
+Generador-Densidad & 0.000 \\ \hline
+Generador-Orden & 0.000 \\ \hline
+Orden-Densidad & 0.000 \\ \hline
+\end{tabular}
+\label{cuadro2}
+\end{table}
+\bibliography{Tarea2}
+\bibliographystyle{unsrt}
+
+\end{document}
