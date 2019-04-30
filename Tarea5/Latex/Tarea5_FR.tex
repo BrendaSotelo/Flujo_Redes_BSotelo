@@ -1,0 +1,265 @@
+\documentclass{article}
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption}
+\usepackage[spanish]{babel}
+%\usepackage[latin1]{inputenc}
+\usepackage{subfigure}
+\usepackage{float}
+\setlength{\parskip}{12pt}  %espacio entre parrafos
+\setlength{\parindent}{0cm} %inicios de cada parrado
+\usepackage{url}       %poner url en referencias
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+  backgroundcolor=\color{white},   
+  basicstyle=\footnotesize,        
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  commentstyle=\color{mygreen},    
+  deletekeywords={...},            
+  escapeinside={\%*}{*)},         
+  extendedchars=true,              
+  frame=single,	                   
+  keepspaces=true,                 
+  keywordstyle=\color{blue},       
+  language=Python,                 
+  numbers=left,
+  numbersep=4pt,
+  firstnumber=1,                    
+  showspaces=false,                
+  showtabs=false,              
+  stepnumber=1,                     
+  stringstyle=\color{mymauve},    
+  tabsize=2,	                   
+  }
+
+\title{\textbf{Caracterización estructural de instancias}}
+\author{Brenda Yaneth Sotelo Benítez \\ 5705}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{center}\rule{1.0\textwidth}{0.1mm} \end{center}
+\vspace{-1cm}
+\begin{center} \Large{\textbf{Introducción}} \end{center}
+\vspace{-1cm}
+\begin{center}\rule{\textwidth}{0.2mm} \end{center}
+
+En este trabajo se realiza la selección de un algoritmo generador, un algoritmo de flujo máximo y de acomodo que sean adecuados para alguna aplicación específica para  generar cinco instancias y establecer si características en los vértices como la distribución de grado, coeficiente de agrupamiento, centralidad de cercanía y de carga, excentricidad y PageRank afectan en el tiempo de ejecución o el valor óptimo en el algoritmo seleccionado, así como analizar que vértices resultan ser buenas fuentes o sumideros y cuáles sería mejor no usar como ninguno si se busca tener un flujo alto, pero no batallar con el tiempo de ejecución. 
+
+Los instancias se obtuvieron por medio de la librería \color{blue}Networkx\color{black}\ \cite{Net} y \color{blue}Matplotlib\color{black}\ \cite{Mat} de \texttt{Python} \cite{Python} para la generación de grafos y guardar imágenes en el formato \textit{eps} respectivamente. Además se hace uso de la librería \color{blue}Numpy\color{black}\ \cite{Num} para la suma de tiempos, cálculo de tiempos promedios y desviaciones estándar y \color{blue}Pandas\color{black}\ \cite{Pd} para el tratamiento de datos. El código empleado se obtuvo consultando documentación oficial \cite{network}. 
+
+Se presenta una breve descripción de los algoritmos seleccionados y las características estructurales de los vértices, visualización de los grafos, fragmentos relevantes de código y una sección de resultados donde se realiza una comparación de distintas variables numéricas a través de grupos, por ejemplo el tiempo de ejecución y las características para vértices.
+
+Las pruebas se han realizado en una PC con procesador Intel Core i3 2.00 GHz y 8.00 GB de RAM.
+
+\section{Instancias}
+Una red de distribución de agua tiene gran relevancia tanto en la industria como en la sociedad y puede ser representada mediante un grafo formado por aristas que representan tuberías y vértices, puntos de extracción y fuentes de abastecimiento como son los embalses y depósitos \cite{red}. 
+
+Por tal razón se ha seleccionado el generador \color{blue}\texttt{grid\_graph}\color{black}\ para hacer la representación de cinco instancias donde los vértices son puentes de extracción y fuentes de abastecimiento y las aristas tuberías, a las cuales se les han asignado pesos positivos normalmente distribuidos con media $\mu=10$ y desviación estándar $\sigma=3 $. También se ha seleccionado el algoritmo \ \color{blue}\texttt{maximum\_flow\_value}\color{black}\ y cada una de las instancias fueron visualizadas con el algoritmo de acomodo \color{blue}\texttt{kamada\_kawai\_layout}\color{black}\ que produce un resultado entendible acorde a la aplicación. Las características de los algoritmos mencionados se pueden encontrar en la práctica dos y cuatro del repositorio de Sotelo \cite{BYSB}.
+
+En la figura \ref{Grafos1} se muestran las instancias de orden 9 y 16 que se generaron con el algoritmo generador y de acomodo. 
+\lstinputlisting[firstline=13, lastline=23]{Clase5.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Instancia 1]{\includegraphics[width=60mm]{I1_1.eps}}\hspace{5mm}
+\subfigure[Instancia 2]{\includegraphics[width=60mm]{I1_2.eps}}\vspace{5mm}
+\subfigure[Instancia 3]{\includegraphics[width=60mm]{I1_3.eps}}\hspace{5mm}
+\subfigure[Instancia 4]{\includegraphics[width=60mm]{I1_4.eps}}\vspace{5mm}
+\subfigure[Instancia 5]{\includegraphics[width=60mm]{I1_5.eps}}
+\caption{Instancias generadas por el algoritmo grid\_graph} \label{Grafos1}
+\end{figure}
+
+\newpage
+Posteriormente en la figura \ref{Grafos2} se les asigna capacidad a las aristas, cuyo valor se representa en el grosor de las aristas. El vértice cuadrado azul representa el vértice fuente, el vértice cuadrado rojo representa el sumidero y el resto de los vértices tienen color morado. 
+
+En el cuadro \ref{cuadro1} se indica el vértice fuente y sumidero de cada una de las instancias ya que en las siguientes visualizaciones no se muestra el número de nodo.  
+\begin{table}[H]
+\centering
+\caption{Vértices fuente y sumidero}
+\begin{tabular}{|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{\textbf{Instancia}} & \multicolumn{1}{l|}{\textbf{Fuente}} & \multicolumn{1}{l|}{\textbf{Sumidero}} \\ \hline
+\textbf{1}                               & (0,0)                                & (1,0)                                  \\ \hline
+\textbf{2}                               & (2,0)                                & (1,1)                                  \\ \hline
+\textbf{3}                               & (3,2)                                & (1,1)                                  \\ \hline
+\textbf{4}                               & (2,1)                                & (3,0)                                  \\ \hline
+\textbf{5}                               & (1,3)                                & (2,0)                                  \\ \hline
+\end{tabular}
+\label{cuadro1}
+\end{table}
+
+\lstinputlisting[firstline=33, lastline=52]{Clase5.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Instancia 1]{\includegraphics[width=60mm]{I2_1.eps}}\hspace{5mm}
+\subfigure[Instancia 2]{\includegraphics[width=60mm]{I2_2.eps}}\vspace{5mm}
+\subfigure[Instancia 3]{\includegraphics[width=60mm]{I2_3.eps}}\hspace{5mm}
+\subfigure[Instancia 4]{\includegraphics[width=60mm]{I2_4.eps}}\vspace{5mm}
+\subfigure[Instancia 5]{\includegraphics[width=60mm]{I2_5.eps}}
+\caption{Instancias con capacidad} \label{Grafos2}
+\end{figure}
+
+\newpage
+Por último, se representa en la figura \ref{Grafos3} el flujo correspondiente a cada arista de color celeste, manteniendo la idea de que el grosor representa la cantidad de flujo que pasa por cada una de ellas. 
+\lstinputlisting[firstline=62, lastline=95]{Clase5.py}
+
+\begin{figure}[H]
+\centering
+\subfigure[Instancia 1]{\includegraphics[width=60mm]{I3_1.eps}}\hspace{5mm}
+\subfigure[Instancia 2]{\includegraphics[width=60mm]{I3_2.eps}}\vspace{5mm}
+\subfigure[Instancia 3]{\includegraphics[width=60mm]{I3_3.eps}}\hspace{5mm}
+\subfigure[Instancia 4]{\includegraphics[width=60mm]{I3_4.eps}}\vspace{5mm}
+\subfigure[Instancia 5]{\includegraphics[width=60mm]{I3_5.eps}}
+\caption{Instancias con solución} \label{Grafos3}
+\end{figure}
+\section{Características estructurales de los vértices}
+
+\subsection*{Distribución de grado}
+Dado un grafo de tamaño \textit{n}, el grado de un vértice \textit{i} se define como el número total de aristas que inciden en él, mientras que la distribución de grado se define como la probabilidad de que un vértice \textit{i} tenga exactamente \textit{k} conexiones con otros vértices.
+
+\texttt{Degree\_centrality}. Calcula la centralidad de grado para los vértices y recibe como único parámetro un grafo.  
+\lstinputlisting[firstline=108, lastline=108]{Clase5.py}
+
+\subsection*{Coeficiente de agrupamiento}
+El coeficiente de agrupamiento mide el nivel de agrupamiento que existe entorno a un vértice, que se calcula como el número total de aristas que conectan a los vecinos más cercanos entre el número máximo de aristas posibles entre todos los vecinos más cercanos. Se puede ver como la probabilidad de que dos vértices vecinos a un vértice \textit{i} sean vecinos entre sí. 
+
+\texttt{Clustering}. Este algoritmo calcula el coeficiente de agrupamiento de los vértices y recibe como parámetros un grafo, lista de nodos para los que se desea calcular el coeficiente y peso de las aristas. Estos últimos dos parámetros son opcionales por lo que de no ser incluidos se toman por defecto todos los vértices del grafo y cada arista recibe un peso de uno. 
+\lstinputlisting[firstline=110, lastline=110]{Clase5.py}
+\subsection*{Centralidad de cercanía}
+La centralidad de cercanía indica que tan cerca está un vértice \textit{i} del resto de los vértices del grafo. Se calcula como el promedio de las distancias más cortas desde el vértice  \textit{i} a los demás vértices. En algunos casos, el recíproco de la distancia promedio se utiliza como la medida de centralidad de cercanía para evitar problemas con las distancias en los grafos no conexos y en estos casos los valores más altos indican una centralidad más alta. 
+
+\texttt{Closeness\_centrality}. Este algoritmo calcula la centralidad de cercanía de los vértices, tomando el recíproco del promedio de las distancias más cortas y normalizando. Recibe como parámetros un grafo, el vértice para el que se quiere encontrar el valor si se desea para uno en específico, la distancia y la opción de normalizar los coeficientes. 
+\lstinputlisting[firstline=109, lastline=109]{Clase5.py}   
+\subsection*{Centralidad de carga}
+La centralidad de carga de un vértice \textit{i} se define como la fracción de todos los caminos más cortos que pasan a través de ese vértice.  
+
+\texttt{Load\_centrality}. Recibe como parámetro principal un grafo y parámetros opcionales la normalización de los valores, el peso y el corte que si se especifica solo considera rutas de longitud menor o igual al corte. 
+\lstinputlisting[firstline=111, lastline=111]{Clase5.py}
+\subsection*{Excentricidad}
+Se define como la distancia máxima desde un vértice \textit{i} a a todos los demás vértices del grafo. 
+
+\texttt{Eccentricity}. Retorna la excentricidad de los nodos de un grafo y recibe como parámetros un grafo y un vértice en particular para el que se desea calcular la excentricidad. 
+\lstinputlisting[firstline=112, lastline=112]{Clase5.py}  
+\subsection*{PageRank}
+Explora e indica la categorización de vértices en redes con base en su importancia.
+
+\texttt{Pagerank}. Retorna el PageRank de los vértices, donde se calcula una clasificación de los vértices de un grafo en función de la estructura de las conexiones entrantes. Recibe como parámetros un grafo, parametro de atenuación, un número máximo de iteraciones para resolver valores propios, toleancia de error, valor de inicio de la iteración para cada vértice y el peso de cada arista.  
+\lstinputlisting[firstline=113, lastline=113]{Clase5.py}
+
+En la figura \ref{Grafos5} se incluyen las visualizaciones de las instancias añadiendo la variación de tamaño de los vértices con las características antes mencionadas, para determinar cuales resultan ser relevantes. Se puede observar que para instancia los vértices de las esquinas tienen menor tamaño a comparación de los demás, debido posiblemente a la estructura que se tiene con el generador, las capacidadades y el flujo.
+
+\begin{figure}[H]
+\centering
+\subfigure[Instancia 1]{\includegraphics[width=60mm]{I4_1.eps}}\hspace{5mm}
+\subfigure[Instancia 2]{\includegraphics[width=60mm]{I4_2.eps}}\vspace{5mm}
+\subfigure[Instancia 3]{\includegraphics[width=60mm]{I4_3.eps}}\hspace{5mm}
+\subfigure[Instancia 4]{\includegraphics[width=60mm]{I4_4.eps}}\vspace{5mm}
+\subfigure[Instancia 5]{\includegraphics[width=60mm]{I4_5.eps}}
+\caption{Instancias con caracterización} \label{Grafos5}
+\end{figure}
+
+\section{Resultados}
+A continuación se presenta la comparación del tiempo de ejecución variando el vértice fuente y sumidero mediante  diagramas de caja y bigote, identificando con rojo los casos en los que el valor de la función objetivo mejora y con azul los que no tienen mejora o empeoran. 
+
+El valor de la función objetivo de la instancia 1 es 16.4 y en la figura \ref{Grafos6} se observa que al variar el vértice sumidero no se encuentran mejoras, por lo que si busca es tener un tiempo menor, se pueden elegir los valores con el mismo valor objetivo que tardan menos, como lo son el (2,1) y el (2,2).
+
+Por otra parte, al variar el vértice fuente, los vértices (0,1), (1,1), (1,2), (2,1), (2,2) presentan una mejora, siendo el (1,1) el que tiene mayor valor  de la función objetivo pero que también consume mucho tiempo a comparación de los otros, mientras el vértice (2,1) presenta un valor objetivo similar con un tiempo de ejecución menor. 
+
+\begin{figure}[H]
+\centering
+\subfigure[Tiempo de ejecución variando sumidero]{\includegraphics[width=60mm]{B1_1.eps}}
+\subfigure[Tiempo de ejecución variando fuente]{\includegraphics[width=60mm]{B2_1.eps}}\vspace{5mm}
+\caption{Instancia 1} \label{Grafos6}
+\end{figure}
+
+El valor objetivo de la instancia 2 es 22.34 y en la figura \ref{Grafos7} se observa que al variar el vértice sumidero no se encuentran mejoras, pero si lo que se busca es conservar el valor de la función objetivo con menor tiempo, se consideraría el vértice (1,0).
+
+Por otra parte, al variar el vértice fuente, los vértices que presentan mejora son el (0,1), (1,0), (1,2), (2,1) y (2,2), de los cuales el de mayor valor objetivo y menor tiempo de ejecución es el nodo (2,1).
+
+\begin{figure}[H]
+\centering
+\subfigure[Tiempo de ejecución variando sumidero]{\includegraphics[width=60mm]{B1_2.eps}}
+\subfigure[Tiempo de ejecución variando fuente]{\includegraphics[width=60mm]{B2_2.eps}}\vspace{5mm}
+\caption{Instancia 2} \label{Grafos7}
+\end{figure}
+
+El valor objetivo de la instancia 3 es 33.16 y en la figura \ref{Grafos8} se observa que al variar el vértice sumidero no se encuentran mejoras, pero si lo que se busca es conservar el valor de la función objetivo con menor tiempo se considera elegir el vértice (2,2).
+
+Por otra parte, los vértices que presentan mejora son el (1,2), (2,1) y (2,2), de los cuales el vértice con mayor valor objetivo es el (2,1)  pero con la desventaja de que consume mucho tiempo, mientras que el de menor tiempo es el (1,2).
+\begin{figure}[H]
+\centering
+\subfigure[Tiempo de ejecución variando sumidero]{\includegraphics[width=60mm]{B1_3.eps}}
+\subfigure[Tiempo de ejecución variando fuente]{\includegraphics[width=60mm]{B2_3.eps}}\vspace{5mm}
+\caption{Instancia 3} \label{Grafos8}
+\end{figure}
+El valor objetivo de la instancia 4 es 16.31 y en la figura \ref{Grafos9} se muestra que hay mejoras en el valor objetivo de la instancia variando el vértice sumidero original, siendo el (1,1) el de mayor valor objetivo y menor tiempo de ejecución.
+
+Por otra parte, se observa que al variar el vértice fuente no se encuentran mejoras, pero si lo que se busca es conservar el valor objetivo con menor tiempo se considera elegir el vértice (3,3).
+
+\begin{figure}[H]
+\centering
+\subfigure[Tiempo de ejecución variando sumidero]{\includegraphics[width=60mm]{B1_4.eps}}
+\subfigure[Tiempo de ejecución variando fuente]{\includegraphics[width=60mm]{B2_4.eps}}\vspace{5mm}
+\caption{Instancia 4} \label{Grafos9}
+\end{figure}
+El valor objetivo de la instancia 5 es 22.14 y en la figura \ref{Grafos10} se observa que al variar el vértice sumidero no se encuentran mejoras, pero si lo que se busca es conservar el valor objetivo con menor tiempo se considera elegir el vértice (0,2) y (1,2).
+
+Por otra parte los vértices que no presentan mejora son el (0,3), (1,3), (3,0) y (3,3), siendo el (1,0) y (1,1) los que presentan mayor valor objetivo y menor tiempo de ejecución . 
+\begin{figure}[H]
+\centering
+\subfigure[Tiempo de ejecución variando sumidero]{\includegraphics[width=60mm]{B1_5.eps}}
+\subfigure[Tiempo de ejecución variando fuente]{\includegraphics[width=60mm]{B2_5.eps}}\vspace{5mm}
+\caption{Instancia 5} \label{Grafos10}
+\end{figure}
+
+En la figura \ref{12} se visualiza cada una las caracterizaciones en la instancia y donde si se tiene un buen vértice fuente pero no sumidero se representa con azul y  verde limón, aquellos que son mejor vértice sumidero pero no fuente se representa con color rojo y amarillo mientras que los que son mejor fuente y sumidero se representan con el color verde oscuro. Para las instancias 1, 2 y 5 se observa que tienen vértices que son buena opción para considerar como vértices fuente si se quiere mejorar el valor de la función objetivo, mientras que la instancia 2 se tiene que vértices son buena opción como vértices sumidero. 
+\begin{figure}[H]
+\centering
+\subfigure[Instancia 1]{\includegraphics[width=60mm]{I5_1.eps}}\hspace{5mm}
+\subfigure[Instancia 2]{\includegraphics[width=60mm]{I5_2.eps}}\vspace{5mm}
+\subfigure[Instancia 3]{\includegraphics[width=60mm]{I5_3.eps}}\hspace{5mm}
+\subfigure[Instancia 4]{\includegraphics[width=60mm]{I5_4.eps}}\vspace{5mm}
+\subfigure[Instancia 5]{\includegraphics[width=60mm]{I5_5.eps}}
+\caption{Instancias con caracterización} \label{12}
+\end{figure}
+
+Por último, en la figura \ref{11} se comparan los algoritmos \texttt{degree\_centrality}, \texttt{clustering}, \texttt{closeness\_centrality}, \texttt{load\_centrality}, \texttt{eccentricity} y \texttt{pagerank} para cada instancia, esperando determinar que características  pudieran ser relevantes para la solución. 
+
+\begin{figure}[H]
+\centering
+\subfigure[Instancia 1]{\includegraphics[width=60mm]{Grafo_1.eps}}\hspace{5mm}
+\subfigure[Instancia 2]{\includegraphics[width=60mm]{Grafo_2.eps}}\vspace{5mm}
+\subfigure[Instancia 3]{\includegraphics[width=60mm]{Grafo_3.eps}}\hspace{5mm}
+\subfigure[Instancia 4]{\includegraphics[width=60mm]{Grafo_4.eps}}\vspace{5mm}
+\subfigure[Instancia 5]{\includegraphics[width=60mm]{Grafo_5.eps}}
+\caption{Valores obtenidos con los algoritmos} \label{11}
+\end{figure}
+
+De acuerdo a los resultados obtenidos de los diagramas de caja y bigote se obtienen las siguientes conclusiones generales: 
+\begin{enumerate}
+\item Se observa que el \texttt{closeness\_centrality} es el que tiene valores más altos, seguido por \texttt{degree\_centrality}, \texttt{load\_centrality}, \texttt{pagerank}, \texttt{eccentricity} y \texttt{clustering} teniendo valor cero en todas las instancias.
+
+\item El algoritmo generador se comporta muy similar sin importar la cantidad de vértices y siempre se obtienen valores similares de las características, por lo que podría decirse que el valor de la función objetivo no depende de las características sino de una buena elección del vértice fuente y sumidero.
+
+\item Tener un vértice fuente en las orillas y un vértice sumidero en el centro asi como ambos en el centro, hace que se obtenga un mejor valor objetivo, ya que los vértices del centro parecen tener mejores valores de las características que los vértices de las orillas y esquinas tal y como se muestra en la figura \ref{12}. 
+
+
+ 
+\end{enumerate}
+
+
+\bibliography{Tarea2}
+\bibliographystyle{unsrt}
+
+\end{document}
