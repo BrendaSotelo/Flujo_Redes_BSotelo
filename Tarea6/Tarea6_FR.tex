@@ -1,0 +1,149 @@
+\documentclass{article}
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption}
+\usepackage[spanish]{babel}
+%\usepackage[latin1]{inputenc}
+\usepackage{subfigure}
+\usepackage{float}
+\setlength{\parskip}{12pt}  %espacio entre parrafos
+\setlength{\parindent}{0cm} %inicios de cada parrado
+\usepackage{url}       %poner url en referencias
+\usepackage{graphicx}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ 
+  backgroundcolor=\color{white},   
+  basicstyle=\footnotesize,        
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  commentstyle=\color{mygreen},    
+  deletekeywords={...},            
+  escapeinside={\%*}{*)},         
+  extendedchars=true,              
+  frame=single,	                   
+  keepspaces=true,                 
+  keywordstyle=\color{blue},       
+  language=Python,                 
+  numbers=left,
+  numbersep=4pt,
+  firstnumber=1,                    
+  showspaces=false,                
+  showtabs=false,              
+  stepnumber=1,                     
+  stringstyle=\color{mymauve},    
+  tabsize=2,	                   
+  }
+\renewcommand{\lstlistingname}{Código}
+
+\title{\textbf{Problema de evacuación de una ciudad}}
+\author{Brenda Yaneth Sotelo Benítez \\ 5705}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{center}\rule{1.0\textwidth}{0.1mm} \end{center}
+\vspace{-1cm}
+\begin{center} \Large{\textbf{Introducción}} \end{center}
+\vspace{-1cm}
+\begin{center}\rule{\textwidth}{0.2mm} \end{center}
+
+Problemas de optimización pueden ser resueltos utilizando el algoritmo de flujo máximo, tales como el problema de corte mínimo o el problema de acoplamiento máximo. En este trabajo se plantea el problema de evacuación de personas o evacuación de una ciudad para el que se muestra la red representativa del problema y la red modificada de tal forma que se resuelva como un problema de flujo máximo.  
+
+Los instancias se obtuvieron por medio de la librería \color{blue}Networkx\color{black}\ \cite{Net} y \color{blue}Matplotlib\color{black}\ \cite{Mat} de \texttt{Python} \cite{Python} para la generación de grafos y guardar imágenes en el formato \textit{eps} respectivamente. Además cada una de las instancias fueron visualizadas con el algoritmo de acomodo
+\color{blue}\texttt{bipartite\_layout}\color{black}\ que produce un resultado entendible acorde a la aplicación. Las caracteristicas de los algoritmos mencionados se pueden encontrar en la práctica dos y cuatro del repositorio de Sotelo \cite{BYSB}. El código empleado se obtuvo consultando documentación oficial \cite{network}. 
+
+Se presenta una breve descripción del problema seleccionado, visualización de las redes, fragmentos relevantes de código y una sección de resultados.
+
+Las pruebas se han realizado en una PC con procesador Intel Core i3 2.00 GHz y 8.00 GB de RAM.
+
+\section*{Problema de evacuación de personas}
+
+Un plan de evacuación se define como la planificación y organización para utilizar de forma óptima los medios que se disponen con la finalidad de reducir las posibles consecuencias que pudieran derivarse de una situación de riesgo como desbordamientos de ríos, deslaves de montañas, sismos, terremotos, maremotos, tornados, huracanes, incendios forestales, tsunamis, ciclones, erupción de un volcán, inundaciones, guerras, epidemias, ataques terroristas, incendios, explosiones, etc.
+
+En la figura \ref{Grafos1} se muestra la red representativa del problema donde se tienen diez personas, tres vehículos y tres calles. Se desea saber cuál es la mejor asignación de persona--vehículo y vehículo--calle. Cada persona y cada vehículo puede ir a cualquier vehículo y calle respectivamente, solamente una vez.
+
+\begin{figure}[H]
+\centering
+\subfigure{\includegraphics[width=40mm]{Red1.eps}}\hspace{-4.3mm}
+\subfigure{\includegraphics[width=40mm]{Red2.eps}}
+\caption{Red representativa del problema} \label{Grafos1}
+\end{figure}
+
+\subsection*{Datos de entrada}
+Los parámetros utilizados para la resolución del problema son los siguientes: 
+\begin{itemize}
+\item\textbf{Número de personas.} Como su nombre lo  indica, este parámetro representa la cantidad de habitantes que hay en la zona afectada que serán evacuados en una cierta cantidad de vehículos que se tiene disponible para cuado ocurre alguna situación de emergencia. 
+\item\textbf{Número de vehículos.} Ante una situación de este tipo se cuenta con una cantidad finita de vehículos. 
+\item\textbf{Número de calles.} Durante el traslado de las personas existen diferentes rutas que se pueden tomar, de tal forma que se permita tener alternativas ya sea más rápidas o ante situaciones de congestionamiento. 
+\item\textbf{Capacidad del vehículo.} Representa la cantidad de personas que pueden trasladarse por vehículo. 
+\item\textbf{Capacidad de las calles.} Las calles, carreteras o avenidas pueden ir en un sentido o dos, lo que se busca es que el traslado sea lo más rápido posible por lo que no se quisiera que todos los vehículos siguieran una misma ruta uno tras otro, es por eso que se establece una cantidad de vehículos por calle para que se tomen rutas alternas y evitar el agrupamiento de vehículos por calle.   
+
+En código \ref{c1} se muestra el fragmento de código de los parámetros de la instancia.
+
+\vspace{.3cm}
+\captionof{lstlisting}{Parámetros de la instancia} \label{c1}
+\lstinputlisting[firstline=5, lastline=12]{red_vehic.py} 
+\vspace{.6cm}
+\end{itemize}
+
+En la figura \ref{Grafos2} se muestra la red utilizada para resolver el algoritmo de flujo máximo, la cual ha sido dividida en dos secciones. La primer sección consta de asignar cada persona a algún vehículo y la segunda consiste en realizar la asignación de cada vehículo a alguna calle, además se consideran las capacidades de personas por vehículo así como vehículo por calle para cumplir con las restricciones deseadas.
+
+\begin{figure}[H]
+\centering
+\subfigure[Asignación persona vehículo]{\includegraphics[width=60mm]{Red_sol1.eps}}\hspace{5mm}
+\subfigure[Asignación vehículo calle]{\includegraphics[width=60mm]{Red_sol2.eps}}
+\caption{Red solución} \label{Grafos2}
+\end{figure}
+
+En el cuadro \ref{cuadro1} se tiene una instancia del problema en la que son 1000 personas que necesitan ser evacuadas, aunque es claro que en las ciudades puede haber más habitantes. Se tienen también 250 vehículos y 20 calles, cada una con capacidad 3 y 4 respectivamente. 
+
+\begin{table}[H]
+\centering
+\caption{Datos de entrada de la instancia}
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Parámetros} & \multicolumn{1}{l|}{\textbf{Unidades}} & \multicolumn{1}{l|}{\textbf{Capacidad}} \\ \hline
+\textbf{Personas}   & 1000                                   & --                                      \\ \hline
+\textbf{Vehículos}  & 80                                     & 3                                       \\ \hline
+\textbf{Calles}     & 20                                     & 4                                       \\ \hline
+\end{tabular}
+\label{cuadro1}
+\end{table}
+
+
+\subsection*{Datos de salida}
+
+Como solución se retornan dos valores, el primero de ellos representa la cantidad de personas que son asignadas y evacuadas dependiendo de la instancia y el segundo es la cantidad de vehículos que serán utilizados. 
+
+\vspace{.3cm}
+\captionof{lstlisting}{Crear conjuntos de nodos y solución} \label{c2}
+\lstinputlisting[firstline=156, lastline=173]{red_vehic.py} 
+\vspace{.6cm}
+
+En el cuadro \ref{cuadro2} se muestra la solución de la instancia mencionada en el cuadro \ref{cuadro1} en la que se tienen 20 calles disponibles y cada una tiene una capacidad de 4 vehículos y donde a lo más transitarían 80 vehículos. Luego si se tienen 80 vehículos y cada uno tiene una capacidad de 3 personas se lograrían transportar como máximo 240 personas. 
+
+\begin{table}[H]
+\centering
+\caption{Datos de salida de la instancia}
+\begin{tabular}{|l|r|r|r|}
+\hline
+\textbf{Parámetros} & \multicolumn{1}{l|}{\textbf{Unidades}} & \multicolumn{1}{l|}{\textbf{Capacidad}} & \multicolumn{1}{l|}{\textbf{Solución}} \\ \hline
+\textbf{Personas}   & 1000                                   & --                                      & 240                                    \\ \hline
+\textbf{Vehículos}  & 80                                     & 3                                       & 80                                     \\ \hline
+\textbf{Calles}     & 20                                     & 4                                       & 20                                     \\ \hline
+\end{tabular}
+\label{cuadro2}
+\end{table}
+
+
+\bibliography{Tarea2}
+\bibliographystyle{unsrt}
+
+\end{document}
